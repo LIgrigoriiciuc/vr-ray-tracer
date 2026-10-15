@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace rt
 {
@@ -53,12 +54,13 @@ namespace rt
                     positionVec.X *= camera.ViewPlaneWidth/width;
                     positionVec.Y *= camera.ViewPlaneHeight/height;
                     var viewPlane = Vector.Cross(camera.Up, camera.Direction);
-                    Console.WriteLine($"""
+                    /*Console.WriteLine($"""
                                        UP {camera.Up}
                                        DIR {camera.Direction}
                                        VP {viewPlane}
                                        """);
-                    viewPlane.Multiply(positionVec);
+                                       */
+                    viewPlane = viewPlane*positionVec.X + camera.Up*positionVec.Y;
                     Vector realPos = viewCenter + viewPlane;
                     var r = new Line(camera.Position, realPos);
                     /*
@@ -69,8 +71,11 @@ namespace rt
                     Console.WriteLine($"calculated view pos : {realPos.ToString()}");
                     */
                     var inter = FindFirstIntersection(r, camera.FrontPlaneDistance, camera.BackPlaneDistance);
-                    if(!inter.Valid || !inter.Visible)
+                    if (!inter.Valid || !inter.Visible)
+                    {
+                        Console.WriteLine($"{!inter.Valid} {inter.T} {inter.Visible}");
                         image.SetPixel(i, j, background);
+                    }
                     else
                         image.SetPixel(i, j, inter.Color);
                 }

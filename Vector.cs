@@ -95,5 +95,10 @@ namespace rt
         {
             return new Vector(v1.Y * v2.Z - v1.Z * v2.Y, -v1.X * v2.Z + v1.Z * v2.X, v1.X * v2.Y - v1.Y * v2.X);
         }
+        
+        public static double Dot(Vector a, Vector b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
     }
 }
