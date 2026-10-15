@@ -73,3 +73,18 @@ For quick tests, set `n = 1` in `Program.cs` (locally only, **do not commit it**
 - **The contract between us is the `Intersection` class:** every geometry must return `Valid`, `Visible`, `T`, `Normal`, `Material` and `Color`.
 - **Walnut note:** its constructor uses `Color.NONE`, so the default material is black. Person 3 must build the material from the voxel color (`Material.FromColor(color)`), otherwise the walnut renders black when lit.
 - **Git workflow:** `git pull` before you start, then `git add .`, `git commit -m "..."`, `git pull`, `git push`.
+## Documentation: explain your own work
+
+Everyone must write a short theoretical explanation of their part, so the other two can fully understand it conceptually (not only the code). Each person adds one file in the `docs/` folder:
+
+- `docs/person1-math-and-ellipsoid.md`
+- `docs/person2-rendering-and-lighting.md`
+- `docs/person3-ct-scan.md`
+  Each explanation should cover:
+
+1. **The idea in plain words:** what problem your part solves and why it is needed in a ray tracer.
+2. **The math/theory:** the formulas used and where they come from (e.g. quaternion rotation, the quadratic equation for ray-ellipsoid intersection, the Phong model, ray marching with alpha accumulation).
+3. **How it maps to the code:** which functions implement which step, and what they take as input and return.
+4. **A small example or diagram:** e.g. one ray and one object with the numbers worked out, or a sketch.
+5. **Problems we ran into:** bugs, wrong signs, performance issues, and how they were fixed.
+   Everyone should read the other two explanations before the final integration, so that any of us can explain the whole project to the professor.
