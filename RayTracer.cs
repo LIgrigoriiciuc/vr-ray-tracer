@@ -48,8 +48,31 @@ namespace rt
             {
                 for (var j = 0; j < height; j++)
                 {
-                    // TODO: ADD CODE HERE
-                    image.SetPixel(i, j, background);
+                    var viewCenter = camera.Position + camera.Direction * camera.ViewPlaneDistance;
+                    var positionVec = new Vector((i - width/2d), (j - height/2d), 1);
+                    positionVec.X *= camera.ViewPlaneWidth/width;
+                    positionVec.Y *= camera.ViewPlaneHeight/height;
+                    var viewPlane = Vector.Cross(camera.Up, camera.Direction);
+                    Console.WriteLine($"""
+                                       UP {camera.Up}
+                                       DIR {camera.Direction}
+                                       VP {viewPlane}
+                                       """);
+                    viewPlane.Multiply(positionVec);
+                    Vector realPos = viewCenter + viewPlane;
+                    var r = new Line(camera.Position, realPos);
+                    /*
+                    Console.WriteLine($"coords : {i}, {j}");
+                    Console.WriteLine($"line pos: {r.Dx.ToString()} {r.X0.ToString()}");
+                    Console.WriteLine($"cam dir: {camera.Direction.ToString()}");
+                    Console.WriteLine($"view plane: {viewPlane.ToString()}");
+                    Console.WriteLine($"calculated view pos : {realPos.ToString()}");
+                    */
+                    var inter = FindFirstIntersection(r, camera.FrontPlaneDistance, camera.BackPlaneDistance);
+                    if(!inter.Valid || !inter.Visible)
+                        image.SetPixel(i, j, background);
+                    else
+                        image.SetPixel(i, j, inter.Color);
                 }
             }
 
