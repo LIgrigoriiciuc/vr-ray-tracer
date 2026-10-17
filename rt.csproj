@@ -11,4 +11,10 @@
       <PackageReference Include="SkiaSharp" Version="3.119.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="ctscan\**">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
