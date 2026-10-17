@@ -19,10 +19,6 @@ cd vr-ray-tracer
 dotnet run
 ```
 
-The `ctscan/` folder (`walnut.dat`, `walnut.raw`) must be next to the executable, otherwise the program crashes at startup.
-
-For quick tests, set `n = 1` in `Program.cs` (locally only, **do not commit it**) so only one frame is rendered. Set it back to `90` for the final run.
-
 ## Work split
 
 ### Person 1: base math + ellipsoid
