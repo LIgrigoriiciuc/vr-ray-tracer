@@ -31,8 +31,7 @@ namespace rt
 
         public override Intersection GetIntersection(Line line, double minDist, double maxDist)
         {
-            // TODO: ADD CODE HERE
-            return Intersection.NONE;
+           
         }
     }
 }

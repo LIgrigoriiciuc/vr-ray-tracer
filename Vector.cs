@@ -90,5 +90,15 @@ namespace rt
         {
             // TODO: ADD CODE HERE
         }
+        
+        public static Vector Cross(Vector v1, Vector v2)
+        {
+            return new Vector(v1.Y * v2.Z - v1.Z * v2.Y, -v1.X * v2.Z + v1.Z * v2.X, v1.X * v2.Y - v1.Y * v2.X);
+        }
+        
+        public static double Dot(Vector a, Vector b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
     }
 }
