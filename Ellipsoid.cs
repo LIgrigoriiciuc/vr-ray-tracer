@@ -31,32 +31,7 @@ namespace rt
 
         public override Intersection GetIntersection(Line line, double minDist, double maxDist)
         {
-            Vector O = line.X0;               // or line.Start
-            Vector D = line.Dx; // or (line.End - line.Start).Normalized()
-
-            double denom = Vector.Dot(, D);
-
-            // Ray is parallel to the plane
-            if (Math.Abs(denom) < 1e-9)
-                return Intersection.NONE;
-
-            double t = Vector.Dot(Point - O, Normal) / denom;
-
-            if (t < minDist || t > maxDist)
-                return Intersection.NONE;
-
-            Vector hit = O + D * t;
-
-            // If the ray hits the back side, flip the normal for shading
-            Vector n = denom < 0 ? Normal : -Normal;
-
-            return new Intersection
-            {
-                T = t,
-                Position = hit,
-                Normal = n,
-                // Material = this.Material
-            };
+           
         }
     }
 }
