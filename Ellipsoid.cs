@@ -36,7 +36,7 @@ namespace rt
 
             // Move the ray into the ellipsoid's local frame: translate to the center and
             // undo the rotation (inverse of a unit quaternion = its conjugate, keep W and minus X,Y,Z).
-            var inverseRotation = new Quaternion(Rotation.W, -Rotation.X, -Rotation.Y, -Rotation.Z);
+            var inverseRotation = new Quaternion(Rotation.W, -Rotation*.X, -Rotation.Y, -Rotation.Z);
             var rayOriginLocal = line.X0 - Center;
             var rayDirectionLocal = new Vector(line.Dx);
             rayOriginLocal.Rotate(inverseRotation);
