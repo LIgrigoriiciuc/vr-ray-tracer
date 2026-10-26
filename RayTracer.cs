@@ -98,10 +98,8 @@ namespace rt
                             var obsDir = inter.Line.Dx;
                             var diffV = Vector.Dot(inter.Normal,lightDir);
                             var intersectAngle = Math.Acos(Vector.Dot(inter.Normal, inter.Line.Dx) *  inter.Normal.Length() * inter.Line.Dx.Length());
-                            var reflectionDir = 
                             var ambient = inter.Material.Ambient;
                             var diffuse = inter.Material.Diffuse * diffV;
-                            var specular =  = 
                         }
                         image.SetPixel(i, j, inter.Color);
                     }
