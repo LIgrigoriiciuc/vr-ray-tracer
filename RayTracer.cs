@@ -48,24 +48,22 @@ namespace rt
             var background = new Color(0.2, 0.2, 0.2, 1.0);
 
             var image = new Image(width, height);
-
+            var viewCenter = camera.Position + camera.Direction * camera.ViewPlaneDistance;
+            var viewPlane = Vector.Cross(camera.Up, camera.Direction);
             for (var i = 0; i < width; i++)
             {
                 for (var j = 0; j < height; j++)
                 {
-                    var viewCenter = camera.Position + camera.Direction * camera.ViewPlaneDistance;
-                    var positionVec = new Vector((i - width/2d), (j - height/2d), 1);
+                    var positionVec = new Vector(width/2d - i,height/2d - j, 1);
                     positionVec.X *= camera.ViewPlaneWidth/width;
                     positionVec.Y *= camera.ViewPlaneHeight/height;
-                    var viewPlane = Vector.Cross(camera.Up, camera.Direction);
                     /*Console.WriteLine($"""
                                        UP {camera.Up}
                                        DIR {camera.Direction}
                                        VP {viewPlane}
                                        """);
                                        */
-                    viewPlane = viewPlane*positionVec.X + camera.Up*positionVec.Y;
-                    Vector realPos = viewCenter + viewPlane;
+                    Vector realPos = viewCenter + viewPlane*positionVec.X + camera.Up*positionVec.Y;
                     var r = new Line(camera.Position, realPos);
                     /*
                     Console.WriteLine($"coords : {i}, {j}");
@@ -77,21 +75,23 @@ namespace rt
                     var inter = FindFirstIntersection(r, camera.FrontPlaneDistance, camera.BackPlaneDistance);
                     if (!inter.Valid || !inter.Visible)
                     {
-                        Console.WriteLine($"{!inter.Valid} {inter.T} {inter.Visible}");
+                        //Console.WriteLine($"{!inter.Valid} {inter.T} {inter.Visible}");
                         image.SetPixel(i, j, background);
                     }
                     else
                     {
+                        /*
                         List<Light> found = new();
                         foreach (var light in lights)
                         {
                             if (!IsLit(inter.Position, light))
                                 continue;
                             found.Add(light);
-                            if (found.Count >= lightLimit)
-                                break;
+                            //if (found.Count >= lightLimit)
+                            //    break;
                         }
-
+                        
+                        
                         foreach (var l in found)
                         {
                             var lightDir = (inter.Position - l.Position).Normalize();
@@ -100,7 +100,10 @@ namespace rt
                             var intersectAngle = Math.Acos(Vector.Dot(inter.Normal, inter.Line.Dx) *  inter.Normal.Length() * inter.Line.Dx.Length());
                             var ambient = inter.Material.Ambient;
                             var diffuse = inter.Material.Diffuse * diffV;
+                            var specular = inter.Material.Specular * (inter.Normal )
                         }
+                        */
+                        
                         image.SetPixel(i, j, inter.Color);
                     }
                 }
