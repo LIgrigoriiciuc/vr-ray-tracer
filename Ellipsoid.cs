@@ -39,12 +39,12 @@ namespace rt
             var inverseRotation = new Quaternion(Rotation.W, -Rotation.X, -Rotation.Y, -Rotation.Z);
             var rayOriginLocal = line.X0 - Center;
             var rayDirectionLocal = new Vector(line.Dx);
-            rayOriginLocal.Rotate(inverseRotation);
-            rayDirectionLocal.Rotate(inverseRotation);
+            rayOriginLocal.Rotate(Rotation);
+            rayDirectionLocal.Rotate(Rotation);
 
             // In that frame the ellipsoid is  (x/a)^2 + (y/b)^2 + (z/c)^2 = 1.
             // Scaling the ray by 1/axes turns it into the unit sphere (t stays the same).
-            var rayOriginUnitSphere = new Vector(rayOriginLocal); //Make new vectirs since divide mutates and we still need o and d 
+            var rayOriginUnitSphere = new Vector(rayOriginLocal); //Make new vectirs since divide mutates and we still need origin and direction 
             var rayDirectionUnitSphere = new Vector(rayDirectionLocal);
             rayOriginUnitSphere.Divide(semiAxes);
             rayDirectionUnitSphere.Divide(semiAxes);
@@ -79,7 +79,7 @@ namespace rt
 
             // The normal must go back to world space: rotate it by the forward rotation
             // (no translation needed, since a normal is a direction)
-            surfaceNormal.Rotate(Rotation);
+            surfaceNormal.Rotate(inverseRotation);
             surfaceNormal.Normalize();
 
             return new Intersection(true, true, this, line, hitDistance, surfaceNormal, Material, Color);
