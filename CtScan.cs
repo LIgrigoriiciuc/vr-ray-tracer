@@ -97,18 +97,34 @@ public class CtScan: Geometry
         double tEnd = Math.Min(tOut, maxDist);
         if (tStart > tEnd) return Intersection.NONE;
         double dt = Math.Min(_thickness[0], Math.Min(_thickness[1], _thickness[2]))*_scale;
+        Color accColor = Color.NONE; //culoarea adunata by now
+        double accAlpha = 0; //opacitatea adunata by now
+        double tHit = 0; //primul t unde am dat de material
+        bool found = false;
+        Vector pHit = null; //punctul primei lovituri
         for (double t = tStart; t <= tEnd; t += dt) //t e ca un slider
         {
             Vector p = line.CoordinateToPosition(t);
             Color c = GetColor(p);
-            if (c.Alpha > 0) //opacitatea, coaja are 0.1, iar miezul 0.8, aerul - 0
+            if (c.Alpha <= 0) continue; //la aer nu adaug nimic
+            //opacitatea, coaja are 0.1, iar miezul 0.8, aerul - 0
+            if (!found)
             {
-                //(0,0,-1) normala
-                //y creste in jos
-                return new Intersection(true, true, this, line, t, new Vector(0, 0, -1), Material.FromColor(c), c);
+                found = true;
+                tHit = t; // first visible intersection
+                pHit = p;
             }
+            double w = c.Alpha * (1 - accAlpha); //cat din ce a ramas neacoperit ia voxelul asta
+            accColor = accColor + c * w;
+            accAlpha += w;
+            if (accAlpha > 0.99) break; //destul de opac
+            //(0,0,-1) normala
+            //y creste in jos
+            //return new Intersection(true, true, this, line, t, new Vector(0, 0, -1), Material.FromColor(c), c);
         }
-        return Intersection.NONE;
+        if (!found) return Intersection.NONE;// am trecut prin tot fara sa dau de material
+        Vector normal = GetNormal(pHit) * -1;
+        return new Intersection(true, true, this, line, tHit, normal, Material.FromColor(accColor), accColor);
             
     }
     

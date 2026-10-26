@@ -49,6 +49,7 @@ namespace rt
         {
             return new Vector(v.X / k, v.Y / k, v.Z / k);
         }
+        
 
         public void Multiply(Vector k)
         {
@@ -88,7 +89,17 @@ namespace rt
 
         public void Rotate(Quaternion q)
         {
-            // TODO: ADD CODE HERE
+            // U = the vector part of the quaternion (x, y, z). The scalar part is q.W.
+            Vector U = new Vector(q.X, q.Y, q.Z);
+            
+            // Rotating v by a unit quaternion q means computing q * v * q^-1.
+            // Expanded, that becomes:
+            //     v' = v + 2*w*(u x v) + 2*u x (u x v)
+            // where "x" is the cross product (the ^ operator in this project).
+            Vector V = new Vector(this.X, this.Y, this.Z) + (U^new Vector(this.X, this.Y, this.Z))*2*q.W + (U^(U^new Vector(this.X, this.Y, this.Z))*2.0);
+            this.X = V.X;
+            this.Y = V.Y;
+            this.Z = V.Z;
         }
         
         public static Vector Cross(Vector v1, Vector v2)
