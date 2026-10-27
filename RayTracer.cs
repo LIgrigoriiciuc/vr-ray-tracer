@@ -80,7 +80,7 @@ namespace rt
                     }
                     else
                     {
-                        /*
+                        
                         List<Light> found = new();
                         foreach (var light in lights)
                         {
@@ -91,7 +91,7 @@ namespace rt
                             //    break;
                         }
                         
-                        
+                        Color compounded = Color.NONE;
                         foreach (var l in found)
                         {
                             var lightDir = (inter.Position - l.Position).Normalize();
@@ -100,11 +100,11 @@ namespace rt
                             var intersectAngle = Math.Acos(Vector.Dot(inter.Normal, inter.Line.Dx) *  inter.Normal.Length() * inter.Line.Dx.Length());
                             var ambient = inter.Material.Ambient;
                             var diffuse = inter.Material.Diffuse * diffV;
-                            var specular = inter.Material.Specular * (inter.Normal )
+                            compounded +=  (ambient + diffuse );
                         }
-                        */
                         
-                        image.SetPixel(i, j, inter.Color);
+                        
+                        image.SetPixel(i, j, compounded);
                     }
                 }
             }
