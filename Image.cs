@@ -11,6 +11,11 @@ namespace rt
             _bitmap.SetPixel(x, y, c.ToSystemColor());
         }
 
+        public SKCanvas GetCanvas()
+        {
+            return new SKCanvas(_bitmap);
+        }
+
         public void Store(string filename) {
             using var stream = new FileStream(filename, FileMode.Create, FileAccess.Write);
             using var image = SKImage.FromBitmap(_bitmap); 

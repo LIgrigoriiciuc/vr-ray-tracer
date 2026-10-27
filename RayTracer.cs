@@ -38,8 +38,9 @@ namespace rt
 
         private bool IsLit(Vector point, Light light)
         {
-            var deltaDist = (point - light.Position);
-            var i = FindFirstIntersection(new Line(point, deltaDist.Normalize()), 0.2,deltaDist.Length());
+            var deltaDist = (light.Position - point);
+            var len = deltaDist.Length();
+            var i = FindFirstIntersection(new Line(point, deltaDist.Normalize()), 0.1,len);
             return !i.Valid;
         }
 
@@ -48,6 +49,7 @@ namespace rt
             var background = new Color(0.2, 0.2, 0.2, 1.0);
 
             var image = new Image(width, height);
+            var paint = image.GetCanvas();
             var viewCenter = camera.Position + camera.Direction * camera.ViewPlaneDistance;
             var viewPlane = Vector.Cross(camera.Up, camera.Direction);
             for (var i = 0; i < width; i++)
@@ -76,7 +78,8 @@ namespace rt
                     if (!inter.Valid || !inter.Visible)
                     {
                         //Console.WriteLine($"{!inter.Valid} {inter.T} {inter.Visible}");
-                        image.SetPixel(i, j, background);
+                        paint.DrawPoint(i,j,background.ToSystemColor());
+                        //image.SetPixel(i, j, background);
                     }
                     else
                     {
@@ -90,24 +93,27 @@ namespace rt
                             //if (found.Count >= lightLimit)
                             //    break;
                         }
-                        
-                        Color compounded = Color.NONE;
+                        Color diffuses = Color.NONE;
+                        Color speculars = Color.NONE;
+                        var obsDir = inter.Line.Dx * -1;
                         foreach (var l in found)
                         {
-                            var lightDir = (inter.Position - l.Position).Normalize();
-                            var obsDir = inter.Line.Dx;
-                            var diffV = Vector.Dot(inter.Normal,lightDir);
-                            var intersectAngle = Math.Acos(Vector.Dot(inter.Normal, inter.Line.Dx) *  inter.Normal.Length() * inter.Line.Dx.Length());
-                            var ambient = inter.Material.Ambient;
-                            var diffuse = inter.Material.Diffuse * diffV;
-                            compounded +=  (ambient + diffuse );
+                            var lightDir = (l.Position -inter.Position).Normalize();
+                            var diffV = Vector.Dot(inter.Normal, lightDir);
+                            if (diffV <= 0d)
+                                continue;
+                            var reflectRay = (inter.Normal * Vector.Dot(lightDir, inter.Normal))* 2d - lightDir;
+                            diffuses += inter.Material.Diffuse * diffV * l.Diffuse;
+                            speculars += inter.Material.Specular * Math.Pow( Math.Max(0d, Vector.Dot(obsDir, reflectRay)),inter.Material.Shininess) * l.Specular;
                         }
                         
-                        
-                        image.SetPixel(i, j, compounded);
+                        paint.DrawPoint(i,j,(inter.Material.Ambient+diffuses+speculars ).ToSystemColor());
+                        //image.SetPixel(i, j, inter.Material.Ambient+diffuses+speculars);
                     }
                 }
             }
+
+            paint.Save();
 
             image.Store(filename);
         }
