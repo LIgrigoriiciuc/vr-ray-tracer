@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace rt
 {
@@ -96,7 +97,7 @@ namespace rt
             // Expanded, that becomes:
             //     v' = v + 2*w*(u x v) + 2*u x (u x v)
             // where "x" is the cross product (the ^ operator in this project).
-            Vector V = new Vector(this.X, this.Y, this.Z) + (U^new Vector(this.X, this.Y, this.Z))*2*q.W + ((U*2.0)^(U^new Vector(this.X, this.Y, this.Z)));
+            Vector V = this + (U^this)*2*q.W + ((U*2.0)^(U^this));
             this.X = V.X;
             this.Y = V.Y;
             this.Z = V.Z;

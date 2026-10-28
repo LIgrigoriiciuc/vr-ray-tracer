@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using SkiaSharp;
 
 namespace rt
@@ -35,12 +36,12 @@ namespace rt
 
             return intersection;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsLit(Vector point, Light light)
         {
-            var deltaDist = (light.Position - point);
+            var deltaDist = (point - light.Position);
             var len = deltaDist.Length();
-            var i = FindFirstIntersection(new Line(point, deltaDist.Normalize()), 0.1,len);
+            var i = FindFirstIntersection(new Line(point, deltaDist.Normalize()), 0.01,len);
             return !i.Valid;
         }
 
@@ -98,13 +99,14 @@ namespace rt
                         var obsDir = inter.Line.Dx * -1;
                         foreach (var l in found)
                         {
-                            var lightDir = (l.Position  - inter.Position).Normalize();
+                            var lightDir = (inter.Position - l.Position).Normalize();
                             var diffV = Vector.Dot(inter.Normal, lightDir);
-                            if (diffV <= 0d)
-                                continue;
+                            if (diffV > 0d)
+                                diffuses += inter.Material.Diffuse * diffV * l.Diffuse;
                             var reflectRay = (inter.Normal * Vector.Dot(lightDir, inter.Normal))* 2d - lightDir;
-                            diffuses += inter.Material.Diffuse * diffV * l.Diffuse;
-                            speculars += inter.Material.Specular * Math.Pow( Math.Max(0d, Vector.Dot(obsDir, reflectRay)),inter.Material.Shininess) * l.Specular;
+                            var obsRefAngle = Vector.Dot(obsDir, reflectRay);
+                            if(obsRefAngle > 0d)
+                                speculars += inter.Material.Specular * Math.Pow(obsRefAngle,inter.Material.Shininess) * l.Specular;
                         }
                         
                         paint.DrawPoint(i,j,(inter.Material.Ambient+diffuses+speculars ).ToSystemColor());
