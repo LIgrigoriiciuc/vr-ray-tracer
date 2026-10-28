@@ -118,14 +118,19 @@ public class CtScan: Geometry
             accColor = accColor + c * w;
             accAlpha += w;
             if (accAlpha > 0.99) break; //destul de opac
-            //(0,0,-1) normala
-            //y creste in jos
-            //return new Intersection(true, true, this, line, t, new Vector(0, 0, -1), Material.FromColor(c), c);
         }
-        if (!found) return Intersection.NONE;// am trecut prin tot fara sa dau de material
-        Vector normal = GetNormal(pHit) * -1;
+
+        // Prag de opacitate: razele care trec doar prin coaja subtire nu mai conteaza ca lovituri.
+        // 0.0 = dezactivat (comportamentul de pana acum). Pentru test incearca 0.5.
+        const double MinOpacity = 0.0;
+        if (!found || accAlpha < MinOpacity) return Intersection.NONE; // am trecut prin tot fara sa dau de material
+
+        accColor = accColor / accAlpha; //culoarea medie, nu cea diluata de alpha mic (repara marginile inchise)
+
+        Vector normal = GetNormal(pHit) * -1; //gradientul arata spre interior, noi vrem spre exterior
+        if (normal * line.Dx > 0.0) normal = normal * -1; //siguranta: normala sa arate mereu spre camera
+
         return new Intersection(true, true, this, line, tHit, normal, Material.FromColor(accColor), accColor);
-            
     }
     
     private int[] GetIndexes(Vector v)
