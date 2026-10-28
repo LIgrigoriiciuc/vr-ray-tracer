@@ -98,7 +98,7 @@ namespace rt
                         var obsDir = inter.Line.Dx * -1;
                         foreach (var l in found)
                         {
-                            var lightDir = (l.Position -inter.Position).Normalize();
+                            var lightDir = (l.Position  - inter.Position).Normalize();
                             var diffV = Vector.Dot(inter.Normal, lightDir);
                             if (diffV <= 0d)
                                 continue;
